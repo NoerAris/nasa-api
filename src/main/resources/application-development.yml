@@ -3,6 +3,14 @@ spring:
     name: nasa-api
   profiles:
     active: development
+  h2:
+    console:
+      enabled: true
+    datasource:
+      url: jdbc:h2:mem:dcbapp
+      driver-class-name: org.h2.Driver
+      data-username: sa
+      data-password: passw0rd!
   jackson:
     time-zone: Asia/Jakarta
 logging:
@@ -20,3 +28,6 @@ server:
   port: 8025
   servlet:
     context-path: /
+nasa:
+  api:
+    key: "DEMO_KEY"

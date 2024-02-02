@@ -2,7 +2,7 @@ spring:
   application:
     name: nasa-api
   profiles:
-    active: development
+    active: production
   h2:
     console:
       enabled: true
@@ -19,11 +19,11 @@ logging:
     console: "%clr(%d %-5level %logger : %L - %msg%n)"
     file: "%d %-5level [%thread] %logger : %L - %msg%n"
   level:
-    root: info
+    root: error
     org:
       org:
         springframework:
-          web: info
+          web: error
 server:
   port: 8025
   servlet:
