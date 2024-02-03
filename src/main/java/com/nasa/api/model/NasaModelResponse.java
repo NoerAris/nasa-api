@@ -2,14 +2,16 @@ package com.nasa.api.model;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class NasaModelResponse {
     private String id;
     private String name;
     private String urlDetail;
-    private Double estimatedDiameterKmMin;
-    private Double estimatedDiameterKmMax;
+    private BigDecimal estimatedDiameterKmMin;
+    private BigDecimal estimatedDiameterKmMax;
     private String closeApproachDateFull;
-    private Double missDistanceKm;
+    private BigDecimal missDistanceKm;
     private boolean potentiallyHazardousAsteroid;
 }

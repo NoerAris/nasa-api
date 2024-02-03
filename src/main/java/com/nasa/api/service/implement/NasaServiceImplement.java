@@ -137,10 +137,10 @@ public class NasaServiceImplement implements NasaService {
                     resp.setId(json.getString("id"));
                     resp.setName(json.getString("name"));
                     resp.setUrlDetail(json.getString("nasa_jpl_url"));
-                    resp.setEstimatedDiameterKmMin(json.getJSONObject("estimated_diameter").getJSONObject("kilometers").getDouble("estimated_diameter_min"));
-                    resp.setEstimatedDiameterKmMax(json.getJSONObject("estimated_diameter").getJSONObject("kilometers").getDouble("estimated_diameter_max"));
+                    resp.setEstimatedDiameterKmMin(json.getJSONObject("estimated_diameter").getJSONObject("kilometers").getBigDecimal("estimated_diameter_min"));
+                    resp.setEstimatedDiameterKmMax(json.getJSONObject("estimated_diameter").getJSONObject("kilometers").getBigDecimal("estimated_diameter_max"));
                     resp.setCloseApproachDateFull(json.getJSONArray("close_approach_data").getJSONObject(0).getString("close_approach_date_full"));
-                    resp.setMissDistanceKm(json.getJSONArray("close_approach_data").getJSONObject(0).getJSONObject("miss_distance").getDouble("kilometers"));
+                    resp.setMissDistanceKm(json.getJSONArray("close_approach_data").getJSONObject(0).getJSONObject("miss_distance").getBigDecimal("kilometers"));
                     resp.setPotentiallyHazardousAsteroid(json.getBoolean("is_potentially_hazardous_asteroid"));
 
                     // Add the NasaModelResponse object to the list
