@@ -1,5 +1,6 @@
 package com.nasa.api.service.implement;
 
+import com.nasa.api.model.CloseApproachModel;
 import com.nasa.api.model.NasaModelResponse;
 import com.nasa.api.service.NasaService;
 import org.json.JSONArray;
@@ -18,6 +19,8 @@ public class NasaServiceImplement implements NasaService {
 
     // NASA API URL format
     private static final String NASA_FEED_URL_FORMAT = "https://api.nasa.gov/neo/rest/v1/feed?start_date=%s&end_date=%s&api_key=%s";
+
+    private static final String NASA_LOOKUP_URL_FORMAT = "https://api.nasa.gov/neo/rest/v1/neo/%s?api_key=%s";
 
     // Maximum count of asteroids to retrieve
     private static final int MAX_ASTEROID_COUNT = 10;
@@ -142,6 +145,8 @@ public class NasaServiceImplement implements NasaService {
                     resp.setCloseApproachDateFull(json.getJSONArray("close_approach_data").getJSONObject(0).getString("close_approach_date_full"));
                     resp.setMissDistanceKm(json.getJSONArray("close_approach_data").getJSONObject(0).getJSONObject("miss_distance").getBigDecimal("kilometers"));
                     resp.setPotentiallyHazardousAsteroid(json.getBoolean("is_potentially_hazardous_asteroid"));
+                    resp.setCloseApproachModels(null);
+                    resp.setOrbitalPeriod(null);
 
                     // Add the NasaModelResponse object to the list
                     nasaModelResponses.add(resp);
@@ -154,5 +159,56 @@ public class NasaServiceImplement implements NasaService {
 
         // Return an empty list if no data is available
         return new ArrayList<>();
+    }
+
+    /**
+     * Retrieves detailed information about an asteroid using its NASA ID.
+     *
+     * @param id The NASA ID of the asteroid.
+     * @return A {@link NasaModelResponse} containing detailed information about the asteroid.
+     */
+    @Override
+    public NasaModelResponse detailAsteroid(String id) {
+        String nasaLookupUrl = String.format(NASA_LOOKUP_URL_FORMAT, id, nasaApiKey);
+        String jsonResponse = restTemplate.getForObject(nasaLookupUrl, String.class);
+
+        if (jsonResponse != null) {
+            NasaModelResponse resp = new NasaModelResponse();
+            JSONObject json = new JSONObject(jsonResponse);
+
+            resp.setId(json.getString("id"));
+            resp.setName(json.getString("name"));
+            resp.setUrlDetail(json.getString("nasa_jpl_url"));
+            resp.setEstimatedDiameterKmMin(json.getJSONObject("estimated_diameter").getJSONObject("kilometers").getBigDecimal("estimated_diameter_min"));
+            resp.setEstimatedDiameterKmMax(json.getJSONObject("estimated_diameter").getJSONObject("kilometers").getBigDecimal("estimated_diameter_max"));
+
+            List<CloseApproachModel> closeApproachModels = new ArrayList<>();
+            if (json.getJSONArray("close_approach_data").length() > 0) {
+                JSONArray data = new JSONArray(json.getJSONArray("close_approach_data"));
+                for (int i = 0; i < data.length(); i++) {
+                    CloseApproachModel closeApproachModel = new CloseApproachModel();
+
+                    closeApproachModel.setCloseApproachDateFull(data.getJSONObject(i).getString("close_approach_date_full"));
+                    closeApproachModel.setRelativeVelocityInKmHour(data.getJSONObject(i).getJSONObject("relative_velocity").getBigDecimal("kilometers_per_hour"));
+                    closeApproachModel.setMissDistanceInKm(data.getJSONObject(i).getJSONObject("miss_distance").getBigDecimal("kilometers"));
+                    closeApproachModel.setOrbitingBody(data.getJSONObject(i).getString("orbiting_body"));
+
+                    closeApproachModels.add(closeApproachModel);
+                }
+
+                resp.setCloseApproachModels(closeApproachModels);
+            }
+
+            resp.setPotentiallyHazardousAsteroid(json.getBoolean("is_potentially_hazardous_asteroid"));
+            resp.setOrbitId(json.getJSONObject("orbital_data").getString("orbit_id"));
+            resp.setFirstObservationDate(json.getJSONObject("orbital_data").getString("first_observation_date"));
+            resp.setLastObservationDate(json.getJSONObject("orbital_data").getString("last_observation_date"));
+            resp.setOrbitalPeriod(json.getJSONObject("orbital_data").getBigDecimal("orbital_period"));
+            resp.setOrbitClassType(json.getJSONObject("orbital_data").getJSONObject("orbit_class").getString("orbit_class_type"));
+
+            return resp;
+
+        }
+        return null;
     }
 }

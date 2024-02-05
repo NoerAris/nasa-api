@@ -26,4 +26,15 @@ public class NasaController extends BaseController {
             return new ArrayList<>();
         }
     }
+
+    @GetMapping("/detail")
+    public NasaModelResponse detailAsteroid(@RequestParam(name = "id") String id) {
+        try {
+            return nasaService.detailAsteroid(id);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+
+            return new NasaModelResponse();
+        }
+    }
 }

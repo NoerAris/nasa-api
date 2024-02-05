@@ -8,4 +8,5 @@ import java.util.List;
 @Transactional
 public interface NasaService {
     List<NasaModelResponse> findTop10NearestAsteroidsByStartDateAndEndDate(String startDate, String endDate);
+    NasaModelResponse detailAsteroid(String id);
 }

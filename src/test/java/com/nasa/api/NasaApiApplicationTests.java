@@ -23,6 +23,7 @@ public class NasaApiApplicationTests {
 	@Test
 	public void contextLoads() throws Exception {
 		findTop10NearestAsteroidByDate();
+		detailAsteroid();
 	}
 
 	@Autowired
@@ -50,5 +51,11 @@ public class NasaApiApplicationTests {
 		String nasaFeedUrl = String.format(NASA_FEED_URL_FORMAT, "2015-09-07", "2015-09-08");
 
 		performAndVerify(nasaFeedUrl);
+	}
+
+	public void detailAsteroid() throws  Exception {
+		String NASA_LOOKUP_URL_FORMAT = "/api/nasa/detail?id=%s";
+		String nasaLookupUrl = String.format(NASA_LOOKUP_URL_FORMAT, "3542519");
+		performAndVerify(nasaLookupUrl);
 	}
 }
